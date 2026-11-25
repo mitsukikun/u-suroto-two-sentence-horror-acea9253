@@ -21,9 +21,14 @@ def main() -> None:
     assert text.count(".") == 2, "entry must be exactly two sentences"
     os.makedirs("/output", exist_ok=True)
     Path("/output/entry.txt").write_text(text, encoding="utf-8")
-    Path(__file__).resolve().parent.joinpath("entry.txt").write_text(
-        text, encoding="utf-8"
-    )
+    # Local copy is best-effort only: the grader runs with a read-only
+    # repo directory, so a failed local write must never fail the run.
+    try:
+        Path(__file__).resolve().parent.joinpath("entry.txt").write_text(
+            text, encoding="utf-8"
+        )
+    except OSError:
+        pass
     print(f"Wrote {len(text)} characters, 2 sentences.")
 
 
